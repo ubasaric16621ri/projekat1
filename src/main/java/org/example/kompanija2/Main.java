@@ -1,6 +1,6 @@
 package org.example.kompanija2;
 
-import org.example.kompanija.Obrada;
+import org.example.kompanija2.Obrada;
 import org.example.model.Rmi;
 
 import java.rmi.registry.LocateRegistry;

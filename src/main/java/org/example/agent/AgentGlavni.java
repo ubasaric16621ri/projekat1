@@ -1,6 +1,5 @@
 package org.example.agent;
 import org.example.agent.AgentNit;
-import org.example.agent.AgentNit;
 import org.example.model.Polazak;
 import org.example.model.Rmi;
 import java.rmi.Naming;
@@ -16,8 +15,8 @@ public class AgentGlavni {
 
     public static Polazak pronadjiNajboljiLet(String sa, String ka, String datum, int brojOsoba) throws Exception {
         List<Future<Polazak>> rezultati = new ArrayList<>();
-        rezultati.add(executor.submit(new AgentNit("rmi://localhost:3000/kompanija", sa, ka, datum)));
-        rezultati.add(executor.submit(new AgentNit("rmi://localhost:3001/kompanija2", sa, ka, datum)));
+        rezultati.add(executor.submit(new AgentNit("rmi://localhost:1099/prevoznik1", sa, ka, datum)));
+        rezultati.add(executor.submit(new AgentNit("rmi://localhost:1099/prevoznik2", sa, ka, datum)));
 
         Polazak najboljiLet = null;
         int najboljaCena = Integer.MAX_VALUE;
@@ -34,7 +33,9 @@ public class AgentGlavni {
     }
 
     public static Rmi dobaviKompanijuZaLet(String oznaka) throws Exception {
-        if (oznaka.startsWith("JU")) return (Rmi) Naming.lookup("rmi://localhost:3000/kompanija");
-        return (Rmi) Naming.lookup("rmi://localhost:3001/kompanija2");
+        if (oznaka.startsWith("JU") || oznaka.startsWith("LH") || oznaka.startsWith("KL")) {
+            return (Rmi) Naming.lookup("rmi://localhost:1099/prevoznik1");
+        }
+        return (Rmi) Naming.lookup("rmi://localhost:1099/prevoznik2");
     }
 }
