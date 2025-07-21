@@ -25,6 +25,9 @@ public class Polazak implements Serializable {
         this.cena = cena;
         this.maksCena = maksCena;
     }
+    public synchronized void vratiMesta(int broj) {
+        slobodno += broj;
+    }
 
     public synchronized boolean pokusajRezervaciju(int brojMesta) {
         if (slobodno >= brojMesta) {

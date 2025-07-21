@@ -1,4 +1,4 @@
-package org.example.kompanija;
+package org.example.kompanija2;
 
 import org.example.model.*;
 import java.rmi.RemoteException;
@@ -18,7 +18,6 @@ public class Obrada implements Rmi {
 
         Polazak let = trazeni.get();
 
-        // Model-level synchronizacija
         if (!let.pokusajRezervaciju(r.brojOsoba)) {
             return new Potvrda(false, "Nema dovoljno mesta.", null);
         }
