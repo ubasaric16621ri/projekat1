@@ -13,7 +13,7 @@ public class Main {
             Rmi stub = (Rmi) UnicastRemoteObject.exportObject(new Obrada(), 0);
             Registry reg = LocateRegistry.getRegistry(1099);
             reg.rebind("prevoznik2", stub);
-            System.out.println("[PREVOZNIK2] Spreman kao 'prevoznik2'.");
+            System.out.println("Pokrenut kao 'prevoznik2'.");
         } catch (Exception e) {
             e.printStackTrace();
         }

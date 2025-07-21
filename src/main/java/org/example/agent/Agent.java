@@ -1,5 +1,4 @@
 package org.example.agent;
-import org.example.agent.AgentNit;
 import org.example.model.Polazak;
 import org.example.model.Rmi;
 import java.rmi.Naming;
@@ -9,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class AgentGlavni {
+public class Agent {
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(3);
 
@@ -33,9 +32,9 @@ public class AgentGlavni {
     }
 
     public static Rmi dobaviKompanijuZaLet(String oznaka) throws Exception {
-        if (oznaka.startsWith("JU") || oznaka.startsWith("LH") || oznaka.startsWith("KL")) {
-            return (Rmi) Naming.lookup("rmi://localhost:1099/prevoznik1");
+        if (oznaka.startsWith("LFT") ) {
+            return (Rmi) Naming.lookup("rmi://localhost:1099/prevoznik2");
         }
-        return (Rmi) Naming.lookup("rmi://localhost:1099/prevoznik2");
+        return (Rmi) Naming.lookup("rmi://localhost:1099/prevoznik1");
     }
 }

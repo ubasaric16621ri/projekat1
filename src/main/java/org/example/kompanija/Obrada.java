@@ -5,44 +5,54 @@ import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Obrada implements Rmi {
 
     @Override
-    public synchronized Potvrda rezervisi(Rezervacija r) throws RemoteException {
+    public Potvrda rezervisi(Rezervacija r) throws RemoteException {
         Let.ocistiIstekleRezervacije();
-        var trazeni = Let.nadjiLet(r.sa, r.ka, r.datum);
+        Optional<Polazak> trazeni = Let.nadjiLet(r.sa, r.ka, r.datum);
         if (trazeni.isEmpty()) {
             return new Potvrda(false, "Nema slobodnih letova.", null);
         }
-
         Polazak let = trazeni.get();
-        if (let.slobodno < r.brojOsoba) {
-            return new Potvrda(false, "Nema dovoljno mesta.", null);
+        synchronized (let) {
+            if (let.slobodno < r.brojOsoba) {
+                return new Potvrda(false, "Nema dovoljno mesta.", null);
+            }
+            let.slobodno -= r.brojOsoba;
+        }
+        String sifra = UUID.randomUUID().toString().substring(0, 8);
+        synchronized (Let.rezervacije) {
+            Let.rezervacije.put(sifra, new Let.RezInfo(let, r.brojOsoba, LocalDateTime.now()));
         }
 
-        let.slobodno -= r.brojOsoba;
-        String sifra = UUID.randomUUID().toString().substring(0, 8);
-        Let.rezervacije.put(sifra, new Let.RezInfo(let, r.brojOsoba, java.time.LocalDateTime.now()));
-        System.out.println("[PREVOZNIK] Rezervisano " + r.brojOsoba + " mesta na letu " + let.oznaka);
-
+        System.out.println("Rezervisano " + r.brojOsoba + " mesta na letu " + let.oznaka);
         return new Potvrda(true, "Rezervacija uspesna.", sifra);
     }
 
+
     @Override
-    public synchronized Uplata plati(String oznakaRezervacije) throws RemoteException {
+    public Uplata plati(String oznakaRezervacije) throws RemoteException {
         Let.ocistiIstekleRezervacije();
-        Let.RezInfo info = Let.rezervacije.get(oznakaRezervacije);
+        Let.RezInfo info;
+        synchronized (Let.rezervacije) {
+            info = Let.rezervacije.remove(oznakaRezervacije);
+        }
         if (info == null) {
             return new Uplata(false, 0, "Rezervacija ne postoji ili je istekla.");
         }
-
         int cena = info.let.trenutnaCena();
-        Let.rezervacije.remove(oznakaRezervacije);
-        System.out.println("[PREVOZNIK] Placeno " + cena + " za let " + info.let.oznaka);
+
+        synchronized (Let.dnevnaZarada) {
+            Let.dnevnaZarada.put(LocalDateTime.now().toLocalDate(), cena);
+         }
+            System.out.println("Placeno " + cena + " za let " + info.let.oznaka);
         return new Uplata(true, cena, "Placanje prihvaceno.");
     }
+
 
     public List<Polazak> pretraziLetove(String sa, String ka, String datum) {
         List<Polazak> rezultat = new ArrayList<>();

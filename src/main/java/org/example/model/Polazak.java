@@ -10,7 +10,6 @@ public class Polazak implements Serializable {
     public LocalDateTime vreme;
     public String kompanija;
     public int slobodno;
-    /** Pocetni broj slobodnih mesta za obracun cene */
     public final int kapacitet;
     public int cena;
     public int maksCena;

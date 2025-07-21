@@ -2,7 +2,7 @@ package org.example.model;
 
 import java.io.Serializable;
 
-public class    Rezervacija implements Serializable {
+public class Rezervacija implements Serializable {
     public String sa;
     public String ka;
     public String datum;

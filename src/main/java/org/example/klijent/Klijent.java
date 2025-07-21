@@ -1,16 +1,16 @@
 package org.example.klijent;
 import org.example.model.*;
-import org.example.agent.AgentGlavni;
+import org.example.agent.Agent;
 import java.rmi.Naming;
 import java.util.List;
 import java.util.Scanner;
 
-public class KlijentGlavni {
+public class Klijent {
 
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws Exception {
-        System.out.println("=== AVIO SISTEM ===");
+        System.out.println("Izaberi nacin rezervacije: ");
         System.out.println("1. Rezervacija direktno preko kompanije");
         System.out.println("2. Rezervacija preko agenta");
         System.out.print("Izbor: ");
@@ -26,7 +26,7 @@ public class KlijentGlavni {
     }
 
     private static void direktnaRezervacija() throws Exception {
-        System.out.println("=== Lista dostupnih kompanija ===");
+        System.out.println("Lista dostupnih kompanija");
         System.out.println("1. Air Serbia");
         System.out.println("2. Lufthansa");
 
@@ -44,9 +44,9 @@ public class KlijentGlavni {
         }
 
         Rmi rmi = (Rmi) Naming.lookup(rmiAdresa);
-        List<Polazak> svi = rmi.pretraziLetove("", "", ""); // vraca sve letove
+        List<Polazak> svi = rmi.pretraziLetove("", "", "");
 
-        System.out.println("=== Lista letova za izabranu kompaniju ===");
+        System.out.println("Lista letova za izabranu kompaniju");
         int i = 1;
         for (Polazak p : svi) {
             System.out.println(i++ + ". " + p.oznaka + " | " + p.sa + " -> " + p.ka + " | " + p.vreme + " | Slobodnih: " + p.slobodno + " | Cena: " + p.trenutnaCena());
@@ -75,7 +75,7 @@ public class KlijentGlavni {
         if (scanner.nextLine().equalsIgnoreCase("da")) {
             Uplata uplata = rmi.plati(potvrda.oznakaRezervacije);
             if (uplata.prihvaceno) {
-                System.out.println("Uplata uspesna! Cena: " + uplata.iznos);
+                System.out.println("Uplata uspesna! Cena: " + uplata.iznos* rez.brojOsoba);
             } else {
                 System.out.println("Greska: " + uplata.poruka);
             }
@@ -98,7 +98,7 @@ public class KlijentGlavni {
         System.out.print("Da li zelite povratni let? (true/false): ");
         boolean povratni = Boolean.parseBoolean(scanner.nextLine());
 
-        Polazak najboljiLet = AgentGlavni.pronadjiNajboljiLet(sa, ka, datum, brojOsoba);
+        Polazak najboljiLet = Agent.pronadjiNajboljiLet(sa, ka, datum, brojOsoba);
 
         if (najboljiLet == null) {
             System.out.println("Nema dostupnih letova.");
@@ -110,7 +110,7 @@ public class KlijentGlavni {
         System.out.print("Da li zelite da rezervisete? (da/ne): ");
         if (!scanner.nextLine().equalsIgnoreCase("da")) return;
 
-        Rmi rmi = AgentGlavni.dobaviKompanijuZaLet(najboljiLet.oznaka);
+        Rmi rmi = Agent.dobaviKompanijuZaLet(najboljiLet.oznaka);
 
         Rezervacija rez = new Rezervacija(najboljiLet.sa, najboljiLet.ka, najboljiLet.vreme.toLocalDate().toString(), brojOsoba, povratni);
         Potvrda potvrda = rmi.rezervisi(rez);
@@ -120,7 +120,7 @@ public class KlijentGlavni {
         if (scanner.nextLine().equalsIgnoreCase("da")) {
             Uplata uplata = rmi.plati(potvrda.oznakaRezervacije);
             if (uplata.prihvaceno) {
-                System.out.println("Uplata uspesna! Cena: " + uplata.iznos);
+                System.out.println("Uplata uspesna! Cena: " + uplata.iznos * rez.brojOsoba);
             } else {
                 System.out.println("Greska: " + uplata.poruka);
             }

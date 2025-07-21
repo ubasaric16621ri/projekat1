@@ -2,12 +2,10 @@ package org.example.kompanija2;
 
 import org.example.model.*;
 import java.rmi.RemoteException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.example.kompanija2.Let.lista;
 
 public class Obrada implements Rmi {
 
@@ -27,7 +25,7 @@ public class Obrada implements Rmi {
         let.slobodno -= r.brojOsoba;
         String sifra = UUID.randomUUID().toString().substring(0, 8);
         Let.rezervacije.put(sifra, new Let.RezInfo(let, r.brojOsoba, java.time.LocalDateTime.now()));
-        System.out.println("[PREVOZNIK] Rezervisano " + r.brojOsoba + " mesta na letu " + let.oznaka);
+        System.out.println("Rezervisano " + r.brojOsoba + " mesta na letu " + let.oznaka);
 
         return new Potvrda(true, "Rezervacija uspesna.", sifra);
     }
@@ -42,7 +40,7 @@ public class Obrada implements Rmi {
 
         int cena = info.let.trenutnaCena();
         Let.rezervacije.remove(oznakaRezervacije);
-        System.out.println("[PREVOZNIK] Placeno " + cena + " za let " + info.let.oznaka);
+        System.out.println("Placeno " + cena + " za let " + info.let.oznaka);
         return new Uplata(true, cena, "Placanje prihvaceno.");
     }
 
