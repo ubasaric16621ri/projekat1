@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class Polazak implements Serializable {
-    public String oznaka;
-    public String sa;
-    public String ka;
-    public LocalDateTime vreme;
-    public String kompanija;
-    public int slobodno;
+    public final String oznaka;
+    public final String sa;
+    public final String ka;
+    public final LocalDateTime vreme;
+    public final String kompanija;
+    private int slobodno;
     public final int kapacitet;
-    public int cena;
-    public int maksCena;
+    public final int cena;
+    public final int maksCena;
 
     public Polazak(String oznaka, String sa, String ka, LocalDateTime vreme, String kompanija, int slobodno, int cena, int maksCena) {
         this.oznaka = oznaka;
@@ -24,6 +24,18 @@ public class Polazak implements Serializable {
         this.kapacitet = slobodno;
         this.cena = cena;
         this.maksCena = maksCena;
+    }
+
+    public synchronized boolean pokusajRezervaciju(int brojMesta) {
+        if (slobodno >= brojMesta) {
+            slobodno -= brojMesta;
+            return true;
+        }
+        return false;
+    }
+
+    public synchronized int getSlobodno() {
+        return slobodno;
     }
 
     public synchronized int trenutnaCena() {

@@ -20,7 +20,7 @@ public class Obrada implements Rmi {
         Polazak let = trazeni.get();
         synchronized (let) {
             if (let.slobodno < r.brojOsoba) {
-                return new Potvrda(false, "Nema dovoljno mesta.", null);
+                 return new Potvrda(false, "Nema dovoljno mesta.", null);
             }
             let.slobodno -= r.brojOsoba;
         }
